@@ -30,43 +30,43 @@ We are current have 3 fields for this in future we could add more the DB field n
 	LicensePassword
 --->
 
+
 <cfif previewSearch neq "">
-    <cfquery name="getRecord">
-      SELECT top 3 t.pk_trackerSearchID, t.trackerLicenseid, t.LicenseEmail,t.LicensePassword,t.renewalDate, lc.*,
-          t.firstname,t.lastname
-      FROM kirks_trackerSearch t
-
-      INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
-
-      where lc.fk_stateID = 9<!---this is the state ID--->
-
-      <cfif previewSearch neq ""><!---this is added so that a specific license can be scraped--->
-        and t.pk_trackerSearchID = <cfqueryparam value="#previewSearch#">
-      <cfelse>
-        <!---here we only collect licenses that have the information required to login and collect the information--->
-        and t.trackerLicenseid != '' and t.trackerLicenseid is not Null
-        and t.LicensePassword != '' and t.LicensePassword is not Null
-        order by t.LicenseEmail, newid()
-      </cfif>
-    </cfquery>
-<cfelse>
   <cfquery name="getRecord">
-    SELECT top 3 t.pk_trackerID, t.trackerLicenseid, t.LicenseEmail,t.LicensePassword,t.renewalDate, lc.*,
-        en.firstname,en.lastname,en.pk_entityid
-    FROM kirks_tracker t
-    INNER JOIN mb_entity en ON en.pk_entityid = t.fk_entityid
+    SELECT top 3 t.pk_trackerSearchID, t.trackerLicenseid, t.LicenseEmail,t.LicensePassword,t.renewalDate, lc.*,
+        t.firstname,t.lastname
+    FROM kirks_trackerSearch t
     INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
     where lc.fk_stateID = 9<!---this is the state ID--->
 
-    <cfif preview neq ""><!---this is added so that a specific license can be scraped--->
-      and t.pk_trackerID = <cfqueryparam value="#preview#">
+    <cfif previewSearch neq ""><!---this is added so that a specific license can be scraped--->
+      and t.pk_trackerSearchID = <cfqueryparam value="#previewSearch#">
     <cfelse>
       <!---here we only collect licenses that have the information required to login and collect the information--->
       and t.trackerLicenseid != '' and t.trackerLicenseid is not Null
       and t.LicensePassword != '' and t.LicensePassword is not Null
       order by t.LicenseEmail, newid()
     </cfif>
+  </cfquery>
+<cfelse>
+  <cfquery name="getRecord">
+  	SELECT top 3 t.pk_trackerID, t.trackerLicenseid, t.LicenseEmail,t.LicensePassword,t.renewalDate, lc.*,
+  			en.firstname,en.lastname,en.pk_entityid
+  	FROM kirks_tracker t
+  	INNER JOIN mb_entity en ON en.pk_entityid = t.fk_entityid
+  	INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
+
+  	where lc.fk_stateID = 9<!---this is the state ID--->
+
+  	<cfif preview neq ""><!---this is added so that a specific license can be scraped--->
+  		and t.pk_trackerID = <cfqueryparam value="#preview#">
+  	<cfelse>
+  		<!---here we only collect licenses that have the information required to login and collect the information--->
+  		and t.trackerLicenseid != '' and t.trackerLicenseid is not Null
+  		and t.LicensePassword != '' and t.LicensePassword is not Null
+  		order by t.LicenseEmail, newid()
+  	</cfif>
   </cfquery>
 </cfif>
 
@@ -116,9 +116,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 
                 <!---log error the other parameters shoudl not change--->
                 <cfif previewSearch neq "">
-				
-				<cfelse>
-                <cfif previewSearch neq "">
                   <cfquery name="addData">
                     update kirks_trackerSearch set
                       scrp_date = #createODBCdatetime(now())#,
@@ -126,7 +123,7 @@ We are current have 3 fields for this in future we could add more the DB field n
                       scrp_error = <cfqueryparam value="#scrp_error#">
                     where pk_trackerSearchID = <cfqueryparam value="#getRecord.pk_trackerSearchID#">
                   </cfquery>
-				        <cfelse>
+                <cfelse>
                   <cfquery name="addData">
                     update kirks_tracker set
                       scrp_date = #createODBCdatetime(now())#,
@@ -135,6 +132,7 @@ We are current have 3 fields for this in future we could add more the DB field n
                     where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
                   </cfquery>
                 </cfif>
+                  
               <cfelse>
                 <!---If the name does not exist in the result, continue to the next row--->
                 <cfif isNull( json.name )>
@@ -229,9 +227,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 				
                 <!---store values in the db --->
                 <cfif previewSearch neq "">
-				
-				<cfelse>
-                <cfif previewSearch neq "">
                   <cfquery name="addData">
                     update kirks_trackerSearch set
                       scrp_rCredits = <cfqueryparam value="#scrp_data.requiredCredits#">,
@@ -242,10 +237,10 @@ We are current have 3 fields for this in future we could add more the DB field n
                       scrp_result = <cfqueryparam value="1">,<!---flagged as a good scrape--->
                       scrp_error = <cfqueryparam value="">,
                       <cfif scrp_expiration_date eq "">
-                      scrp_expire = <cfqueryparam cfsqltype="CF_SQL_DATE" null="Yes"> 
-                    <cfelse>
-                      scrp_expire = #createODBCdate(scrp_expiration_date)#
-                    </cfif>
+                        scrp_expire = <cfqueryparam cfsqltype="CF_SQL_DATE" null="Yes"> 
+                      <cfelse>
+                        scrp_expire = #createODBCdate(scrp_expiration_date)#
+                      </cfif>
                     where pk_trackerSearchID = <cfqueryparam value="#getRecord.pk_trackerSearchID#">
                   </cfquery>
                 <cfelse>
@@ -259,13 +254,14 @@ We are current have 3 fields for this in future we could add more the DB field n
                       scrp_result = <cfqueryparam value="1">,<!---flagged as a good scrape--->
                       scrp_error = <cfqueryparam value="">,
                       <cfif scrp_expiration_date eq "">
-                      scrp_expire = <cfqueryparam cfsqltype="CF_SQL_DATE" null="Yes"> 
-                    <cfelse>
-                      scrp_expire = #createODBCdate(scrp_expiration_date)#
-                    </cfif>
+                        scrp_expire = <cfqueryparam cfsqltype="CF_SQL_DATE" null="Yes"> 
+                      <cfelse>
+                        scrp_expire = #createODBCdate(scrp_expiration_date)#
+                      </cfif>
                     where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
                   </cfquery>
                 </cfif>
+                  
               </cfif>
 
             <cfcatch name="e">
@@ -274,9 +270,6 @@ We are current have 3 fields for this in future we could add more the DB field n
               <cfdump var="#e#">
 
               <!---If something above fails log in DB --->
-              <cfif previewSearch neq "">
-				
-				<cfelse>
               <cfif previewSearch neq "">
                 <cfquery name="addData">
                   update kirks_trackerSearch set
@@ -294,7 +287,7 @@ We are current have 3 fields for this in future we could add more the DB field n
                   where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#" />
                 </cfquery>
               </cfif>
-        </cfif>
+              
             </cfcatch>
           </cftry>
 

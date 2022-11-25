@@ -49,12 +49,12 @@ We are current have 3 fields for this in future we could add more the DB field n
 	LicensePassword
 --->
 
+
 <cfif previewSearch neq "">
 	<cfquery name="getRecord">
 		SELECT top 3 t.pk_trackerSearchID, t.trackerLicenseid, t.LicenseEmail,t.LicensePassword,t.renewalDate, lc.*,
 				t.firstname,t.lastname
 		FROM kirks_trackerSearch t
-
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
 		where lc.fk_stateID = 21 <!---this is the state ID--->
@@ -157,6 +157,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 				<cfset req = getRecord.requiredCredits><!---required credits as defined by template--->
 				<cfset elect = getRecord.electiveCredits><!---elective credits as defined by template--->
@@ -326,8 +327,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 								<cfelse>
 									scrp_expire = #createODBCdate(dateformat(left(scrp_expiration_date,10),'mm/dd/yyyy'))#
 								</cfif>
-								where pk_trackerSearchID = <cfqueryparam value="#getRecord.pk_trackerSearchID#">
-							</cfquery>
+							where pk_trackerSearchID = <cfqueryparam value="#getRecord.pk_trackerSearchID#">
+						</cfquery>
 					<cfelse>
 						<cfquery name="addData">
 							update kirks_tracker set
@@ -343,9 +344,10 @@ We are current have 3 fields for this in future we could add more the DB field n
 								<cfelse>
 									scrp_expire = #createODBCdate(dateformat(left(scrp_expiration_date,10),'mm/dd/yyyy'))#
 								</cfif>
-								where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
-							</cfquery>
-						</cfif>
+							where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
+						</cfquery>
+					</cfif>
+						
 				<cfelse>
 					<cfif previewSearch neq "">
 						<cfquery name="addData">
@@ -364,6 +366,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 							where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
 						</cfquery>
 					</cfif>
+						
+				
 				</cfif>
 					
 				
@@ -393,6 +397,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						where pk_trackerID = <cfqueryparam value="#getRecord.pk_trackerID#">
 					</cfquery>
 				</cfif>
+					
+			
 			</cfcatch>
 		</cftry>
 	

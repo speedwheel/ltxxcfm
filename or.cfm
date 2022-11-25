@@ -20,35 +20,61 @@ We are current have 3 fields for this in future we could add more the DB field n
 --->
 
 <cfif previewSearch neq "">
-	
+	<cfquery name="qryRecord">
+		SELECT top 3 
+		t.pk_trackerSearchID, 
+		t.trackerLicenseid, 
+		t.LicenseEmail,
+		t.LicensePassword,
+		t.renewalDate, 
+
+		lc.*,
+		
+		t.firstname,
+		t.lastname
+
+		FROM kirks_trackerSearch t
+		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
+
+		WHERE lc.fk_stateID = 38 <!---this is the state ID--->
+
+		<cfif previewSearch neq ""><!---this is added so that a specific license can be scraped--->
+			AND t.pk_trackerSearchID = <cfqueryparam value="#previewSearch#" cfsqltype="cf_sql_integer">
+		<cfelse>
+			<!---here we only collect licenses that have the information required to login and collect the information--->
+			AND t.trackerLicenseid != '' AND t.trackerLicenseid IS NOT NULL
+			ORDER BY NEWID()
+		</cfif>
+	</cfquery>
 <cfelse>
-	<cfquery name="getRecord">
-	SELECT top 3 
-	t.pk_trackerSearchID, 
-	t.trackerLicenseid, 
-	t.LicenseEmail,
-	t.LicensePassword,
-	t.renewalDate, 
+	<cfquery name="qryRecord">
+		SELECT top 3 
+		t.pk_trackerID, 
+		t.trackerLicenseid, 
+		t.LicenseEmail,
+		t.LicensePassword,
+		t.renewalDate, 
 
-	lc.*,
-	
-	t.firstname,
-	t.lastname
+		lc.*,
+		
+		en.firstname,
+		en.lastname,
+		en.pk_entityid
 
-	FROM kirks_trackerSearch t
+		FROM kirks_tracker t
+		INNER JOIN mb_entity en ON en.pk_entityid = t.fk_entityid
+		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
-	INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
+		WHERE lc.fk_stateID = 38 <!---this is the state ID--->
 
-	WHERE lc.fk_stateID = 38 <!---this is the state ID--->
-
-	<cfif previewSearch neq ""><!---this is added so that a specific license can be scraped--->
-		AND t.pk_trackerSearchID = <cfqueryparam value="#previewSearch#" cfsqltype="cf_sql_integer">
-	<cfelse>
-		<!---here we only collect licenses that have the information required to login and collect the information--->
-		AND t.trackerLicenseid != '' AND t.trackerLicenseid IS NOT NULL
-		ORDER BY NEWID()
-	</cfif>
-</cfquery>
+		<cfif preview neq ""><!---this is added so that a specific license can be scraped--->
+			AND t.pk_trackerID = <cfqueryparam value="#preview#" cfsqltype="cf_sql_integer">
+		<cfelse>
+			<!---here we only collect licenses that have the information required to login and collect the information--->
+			AND t.trackerLicenseid != '' AND t.trackerLicenseid IS NOT NULL
+			ORDER BY NEWID()
+		</cfif>
+	</cfquery>
 </cfif>
 
 <cfif qryRecord.recordcount eq 0>
@@ -101,6 +127,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -132,6 +159,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+				
 			</cfif>
 			
 			<cfcatch type="any">
@@ -156,6 +185,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+			
 			</cfcatch>
 		</cftry>
 	</cfloop>

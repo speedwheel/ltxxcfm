@@ -20,7 +20,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 --->
 
 <cfif previewSearch neq "">
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerSearchID, 
 		t.trackerLicenseid, 
@@ -34,7 +34,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 		t.lastname
 
 		FROM kirks_trackerSearch t
-
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
 		WHERE lc.fk_stateID = 31 <!---this is the state ID--->
@@ -48,7 +47,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 <cfelse>
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerID, 
 		t.trackerLicenseid, 
@@ -128,6 +127,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -163,6 +163,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+				
 			</cfif>
 			
 			<cfcatch type="any">
@@ -176,10 +178,10 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_date = #createODBCdatetime(now())#,
 							scrp_result = <cfqueryparam value="-1">,
 							<cfif isDefined('error')>
-							scrp_error = <cfqueryparam value="#error#" cfsqltype="cf_sql_varchar">
-							<cfelse>
-							scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
-							</cfif>
+	                        scrp_error = <cfqueryparam value="#error#" cfsqltype="cf_sql_varchar">
+	                        <cfelse>
+	                        scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
+	                        </cfif>
 						WHERE pk_trackerSearchID = <cfqueryparam value="#qryRecord.pk_trackerSearchID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				<cfelse>
@@ -188,13 +190,15 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_date = #createODBCdatetime(now())#,
 							scrp_result = <cfqueryparam value="-1">,
 							<cfif isDefined('error')>
-							scrp_error = <cfqueryparam value="#error#" cfsqltype="cf_sql_varchar">
-							<cfelse>
-							scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
-							</cfif>
+	                        scrp_error = <cfqueryparam value="#error#" cfsqltype="cf_sql_varchar">
+	                        <cfelse>
+	                        scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
+	                        </cfif>
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+			
 			</cfcatch>
 		</cftry>
 	</cfloop>

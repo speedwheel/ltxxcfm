@@ -20,7 +20,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 --->
 
 <cfif previewSearch neq "">
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerSearchID, 
 		t.trackerLicenseid, 
@@ -34,7 +34,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 		t.lastname
 
 		FROM kirks_trackerSearch t
-
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
 		WHERE lc.fk_stateID = 26 <!---this is the state ID--->
@@ -48,7 +47,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 <cfelse>
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerID, 
 		t.trackerLicenseid, 
@@ -127,6 +126,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -159,6 +159,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+				
 			</cfif>
 			
 			<cfcatch type="any">
@@ -183,6 +185,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+			
 			</cfcatch>
 		</cftry>
 	</cfloop>

@@ -18,6 +18,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 	LicenseEmail
 	LicensePassword
 --->
+
 <cfif previewSearch neq "">
 	<cfquery name="qryRecord">
 		SELECT top 3 
@@ -114,7 +115,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 					</td>
 				</tr>
 				<!---log error the other parameters shoudl not change--->
-
 				<cfif previewSearch neq "">
 					<cfquery name="addData">
 						UPDATE kirks_trackerSearch SET
@@ -132,6 +132,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+				
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -174,7 +175,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 				</tr>
 				
 				<!---store values in the db --->
-
 				<cfif previewSearch neq "">
 					<cfquery name="addData">
 						UPDATE kirks_trackerSearch SET
@@ -182,7 +182,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_success_date = #createODBCdatetime(now())#,
 							<cfif structKeyExists(json, "courses") and isArray(json.courses) and arrayLen(json.courses) gt 0>
 								scrp_rCredits = <cfqueryparam value="#coursesTotal.Req#">,
-								scrp_eCredits = <cfqueryparam value="#coursesTotal.Elec#">,
+	                    		scrp_eCredits = <cfqueryparam value="#coursesTotal.Elec#">,
 								scrp_topics = <cfqueryparam value="#SerializeJSON(json.courses)#">,
 							</cfif>
 							scrp_result = <cfqueryparam value="1">,<!---flagged as a good scrape--->
@@ -197,7 +197,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_success_date = #createODBCdatetime(now())#,
 							<cfif structKeyExists(json, "courses") and isArray(json.courses) and arrayLen(json.courses) gt 0>
 								scrp_rCredits = <cfqueryparam value="#coursesTotal.Req#">,
-								scrp_eCredits = <cfqueryparam value="#coursesTotal.Elec#">,
+	                    		scrp_eCredits = <cfqueryparam value="#coursesTotal.Elec#">,
 								scrp_topics = <cfqueryparam value="#SerializeJSON(json.courses)#">,
 							</cfif>
 							scrp_result = <cfqueryparam value="1">,<!---flagged as a good scrape--->
@@ -206,6 +206,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 				
 			</cfif>
 			
@@ -221,7 +222,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_result = <cfqueryparam value="-1">,
 							scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
 						WHERE pk_trackerSearchID = <cfqueryparam value="#qryRecord.pk_trackerSearchID#" cfsqltype="cf_sql_integer">
-				</cfquery>
+					</cfquery>
 				<cfelse>
 					<cfquery name="addData">
 						UPDATE kirks_tracker SET
@@ -231,6 +232,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+
 			
 			</cfcatch>
 		</cftry>

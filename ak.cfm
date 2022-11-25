@@ -18,6 +18,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 	LicenseEmail
 	LicensePassword
 --->
+
 <cfif previewSearch neq "">
 	<cfquery name="qryRecord">
 		SELECT top 3 
@@ -25,7 +26,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		t.trackerLicenseid, 
 		t.LicenseEmail,
 		t.LicensePassword,
-		t.renewalDate
+		t.renewalDate, 
 
 		lc.*,
 		
@@ -33,7 +34,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 		t.lastname
 
 		FROM kirks_trackerSearch t
-		
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
 		WHERE lc.fk_stateID = 2 <!---this is the state ID--->
@@ -47,7 +47,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 <cfelse>
-
 	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerID, 
@@ -114,7 +113,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 					</td>
 				</tr>
 				<!---log error the other parameters shoudl not change--->
-			
 				<cfif previewSearch neq "">
 					<cfquery name="addData">
 						UPDATE kirks_trackerSearch SET
@@ -132,6 +130,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+				
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -142,7 +141,6 @@ We are current have 3 fields for this in future we could add more the DB field n
 				</tr>
 				
 				<!---store values in the db --->
-
 				<cfif previewSearch neq "">
 					<cfquery name="addData">
 						UPDATE kirks_trackerSearch SET
@@ -153,8 +151,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_expire = #createODBCdate(dateformat(left(json.expiration_date, 10), 'mm/dd/yyyy'))#
 						WHERE pk_trackerSearchID = <cfqueryparam value="#qryRecord.pk_trackerSearchID#" cfsqltype="cf_sql_integer">
 					</cfquery>
-				 <cfelse>
-					<cfquery>
+				<cfelse>
+					<cfquery name="addData">
 						UPDATE kirks_tracker SET
 							scrp_date = #createODBCdatetime(now())#,
 							scrp_success_date = #createODBCdatetime(now())#,
@@ -164,6 +162,9 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+				
+				
+			</cfif>
 			
 			<cfcatch type="any">
 				<tr style="background-color:palevioletred">
@@ -187,6 +188,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+				
 			
 			</cfcatch>
 		</cftry>

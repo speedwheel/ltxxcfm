@@ -20,7 +20,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 --->
 
 <cfif previewSearch neq "">
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerSearchID, 
 		t.trackerLicenseid, 
@@ -30,17 +30,13 @@ We are current have 3 fields for this in future we could add more the DB field n
 
 		lc.*,
 		
-		en.firstname,
-		en.lastname,
+		t.firstname,
+		t.lastname
 		par.entityName
 
 		FROM kirks_trackerSearch t
-
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
-		LEFT JOIN mb_EntityRelationship crel ON crel.fk_RelatedEntityId = en.pk_entityid 
-		LEFT JOIN mb_EntityEntityRelationship rel ON rel.fk_relatedEntityRelationshipId = crel.pk_EntityRelationshipId
-		LEFT JOIN mb_EntityRelationship prel ON prel.pk_EntityRelationshipId = rel.fk_EntityRelationshipId
-		LEFT JOIN mb_entity par ON par.pk_entityID = prel.fk_RelatedEntityId
+		LEFT JOIN mb_entity par ON par.pk_entityID = 4465687 <!---showami--->
 
 
 		WHERE lc.fk_stateID = 11 <!---this is the state ID--->
@@ -54,7 +50,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 <cfelse>
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
 		t.pk_trackerID, 
 		t.trackerLicenseid, 
@@ -89,6 +85,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 </cfif>
+
 
 <cfif qryRecord.recordcount eq 0>
 	No license found <cfabort>
@@ -148,6 +145,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -182,6 +180,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+				
 			</cfif>
 			
 			<cfcatch type="any">
@@ -206,6 +206,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+			
 			</cfcatch>
 		</cftry>
 	</cfloop>

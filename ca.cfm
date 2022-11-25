@@ -20,9 +20,9 @@ We are current have 3 fields for this in future we could add more the DB field n
 --->
 
 <cfif previewSearch neq "">
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
-		t.pk_trackerID, 
+		t.pk_trackerSearchID, 
 		t.trackerLicenseid, 
 		t.LicenseEmail,
 		t.LicensePassword,
@@ -30,11 +30,10 @@ We are current have 3 fields for this in future we could add more the DB field n
 
 		lc.*,
 		
-		l.firstname,
-		l.lastname
+		t.firstname,
+		t.lastname
 
 		FROM kirks_trackerSearch t
-
 		INNER JOIN kirks_licenseScrape lc ON lc.pk_licenseid = t.fk_licenseScrapeid
 
 		WHERE lc.fk_stateID = 5 <!---this is the state ID--->
@@ -48,9 +47,9 @@ We are current have 3 fields for this in future we could add more the DB field n
 		</cfif>
 	</cfquery>
 <cfelse>
-	<cfquery name="getRecord">
+	<cfquery name="qryRecord">
 		SELECT top 3 
-		t.pk_trackerSearchID, 
+		t.pk_trackerID, 
 		t.trackerLicenseid, 
 		t.LicenseEmail,
 		t.LicensePassword,
@@ -69,7 +68,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 		WHERE lc.fk_stateID = 5 <!---this is the state ID--->
 
 		<cfif preview neq ""><!---this is added so that a specific license can be scraped--->
-			AND t.pk_trackerSearchID = <cfqueryparam value="#preview#" cfsqltype="cf_sql_integer">
+			AND t.pk_trackerID = <cfqueryparam value="#preview#" cfsqltype="cf_sql_integer">
 		<cfelse>
 			<!---here we only collect licenses that have the information required to login and collect the information--->
 			AND t.trackerLicenseid != '' AND t.trackerLicenseid IS NOT NULL
@@ -127,6 +126,7 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
 			<cfelse>
 			
 				<tr bgcolor="white">
@@ -159,6 +159,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
 				</cfif>
+					
+				
 			</cfif>
 			
 			<cfcatch type="any">
@@ -182,6 +184,8 @@ We are current have 3 fields for this in future we could add more the DB field n
 							scrp_error = <cfqueryparam value="Error Pulling Data" cfsqltype="cf_sql_varchar">
 						WHERE pk_trackerID = <cfqueryparam value="#qryRecord.pk_trackerID#" cfsqltype="cf_sql_integer">
 					</cfquery>
+				</cfif>
+					
 			
 			</cfcatch>
 		</cftry>
